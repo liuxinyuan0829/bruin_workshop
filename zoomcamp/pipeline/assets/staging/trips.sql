@@ -97,15 +97,15 @@ columns:
 
 WITH cleaned AS (
   SELECT
-    VendorID AS vendor_id,
+    vendor_id,
     tpep_pickup_datetime AS pickup_datetime,
     tpep_dropoff_datetime AS dropoff_datetime,
     passenger_count,
     trip_distance,
-    RatecodeID AS rate_code,
+    ratecode_id AS rate_code,
     store_and_fwd_flag,
-    PULocationID AS pu_location_id,
-    DOLocationID AS do_location_id,
+    pu_location_id,
+    do_location_id,
     payment_type,
     fare_amount,
     extra,
@@ -115,7 +115,7 @@ WITH cleaned AS (
     total_amount,
     extracted_at,
     ROW_NUMBER() OVER (
-      PARTITION BY VendorID, tpep_pickup_datetime, PULocationID, DOLocationID, trip_distance
+      PARTITION BY vendor_id, tpep_pickup_datetime, pu_location_id, do_location_id, trip_distance
       ORDER BY extracted_at DESC
     ) AS rn
   FROM ingestion.trips

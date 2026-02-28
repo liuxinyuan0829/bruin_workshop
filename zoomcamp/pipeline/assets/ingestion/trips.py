@@ -72,9 +72,6 @@ from datetime import datetime, timedelta
 from typing import List
 import pandas as pd
 
-import requests
-from io import BytesIO
-
 
 
 def get_date_range():
@@ -99,7 +96,7 @@ def get_taxi_types() -> List[str]:
 def generate_urls(start_date: datetime, end_date: datetime, taxi_types: List[str]) -> List[str]:
     """Generate TLC parquet URLs for the given date range and taxi types."""
     base_url = "https://d37ci6vzurychx.cloudfront.net/trip-data/"
-    #base_url = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/"
+    #base_url = ""
     
 
     urls = []
@@ -114,7 +111,6 @@ def generate_urls(start_date: datetime, end_date: datetime, taxi_types: List[str
         
         for taxi_type in taxi_types:
             filename = f"{taxi_type}_tripdata_{year:04d}-{month:02d}.parquet"
-            #filename = f"{taxi_type}/{taxi_type}_tripdata_{year:04d}-{month:02d}.csv.gz"
             url = base_url + filename
             urls.append(url)
         

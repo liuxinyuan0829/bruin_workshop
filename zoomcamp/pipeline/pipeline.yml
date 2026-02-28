@@ -32,7 +32,7 @@ variables:
     type: array  # should be: array
     items:
       type: string  # should be: string
-    default: ["yellow", "green"]
+    default: ["yellow"]
 #   other_string_var: (optional) Add your own variable and use it in both Python and SQL assets.
 #     type: string
 #     default: "my_value"
