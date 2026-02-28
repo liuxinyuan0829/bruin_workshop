@@ -72,6 +72,10 @@ from datetime import datetime, timedelta
 from typing import List
 import pandas as pd
 
+import requests
+from io import BytesIO
+
+
 
 def get_date_range():
     """Extract start and end dates from environment variables."""
@@ -94,20 +98,23 @@ def get_taxi_types() -> List[str]:
 
 def generate_urls(start_date: datetime, end_date: datetime, taxi_types: List[str]) -> List[str]:
     """Generate TLC parquet URLs for the given date range and taxi types."""
-    #base_url = "https://d37ci6vzurychx.cloudfront.net/trip-data/"
-    base_url = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/"
-
+    base_url = "https://d37ci6vzurychx.cloudfront.net/trip-data/"
+    #base_url = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/"
+    
 
     urls = []
     
+    
+
+
     current = start_date.replace(day=1)
     while current <= end_date:
         year = current.year
         month = current.month
         
         for taxi_type in taxi_types:
-            #filename = f"{{taxi_type}_tripdata_{year:04d}-{month:02d}.parquet"
-            filename = f"{taxi_type}/{taxi_type}_tripdata_{year:04d}-{month:02d}.csv.gz"
+            filename = f"{taxi_type}_tripdata_{year:04d}-{month:02d}.parquet"
+            #filename = f"{taxi_type}/{taxi_type}_tripdata_{year:04d}-{month:02d}.csv.gz"
             url = base_url + filename
             urls.append(url)
         
@@ -131,6 +138,7 @@ def materialize():
     taxi_types = get_taxi_types()
     urls = generate_urls(start_date, end_date, taxi_types)
     
+
     print(f"Ingesting NYC Taxi data from {start_date.date()} to {end_date.date()}")
     print(f"Taxi types: {taxi_types}")
     print(f"Fetching {len(urls)} files...")
@@ -141,8 +149,12 @@ def materialize():
     for url in urls:
         try:
             print(f"  Fetching: {url}")
-            #df = pd.read_parquet(url)
-            df = pd.read_csv(url)
+
+            #response = requests.get(url, headers=headers)
+            #response.raise_for_status()  # raises error if 403 or other HTTP error
+
+            #df = pd.read_parquet(BytesIO(response.content), engine="pyarrow" )
+            df = pd.read_parquet(url)
             df["extracted_at"] = extracted_at
             dataframes.append(df)
             print(f"    ✓ Loaded {len(df):,} rows")
